@@ -51,14 +51,57 @@ def buyStock():
     conn.commit()
     conn.close()
 
+    symbol_entry.delete(0, tk.END)
+    quantity_entry.delete(0, tk.END)
+    price_entry.delete(0, tk.END)
+
 def sellStock():
-    pass
+    symbol = symbol_entry.get().strip().upper()
+
+    if not symbol:
+        messagebox.showerror("Input Error", "Please give a valid symbol!")
+        return
+    
+    conn = sqlite3.connect("Stocks.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM stocks WHERE symbol=?", (symbol,))
+    conn.commit()
+
+    if cursor.rowcount == 0:
+        result_label.config(text=f"{symbol} not found in the database!")
+    else:
+        result_label.config(text=f"{symbol} successfully sold!")
+
+    conn.close()
+    symbol_entry.delete(0, tk.END)
 
 def showAllStocks():
-    pass
+    conn = sqlite3.connect("Stocks.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT symbol, quantity, price FROM stocks")
+    all_stocks = cursor.fetchall()
+
+    if not all_stocks:
+        result_label.config(text="Database has no stocks!")
+        return
+    
+    final_list = []
+    for stock in all_stocks:
+        final_list.append(f"{stock[0]}: {stock[1]} shares at {stock[2]:.2f}€ each")
+
+    result_label.config(text='\n'.join(final_list))
+
+    conn.commit()
+    conn.close()
 
 def removeAllStocks():
-    pass
+    conn = sqlite3.connect("Stocks.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM stocks")
+    conn.commit()
+    conn.close()
+    result_label.config(text="All stocks have been deleted successfully")
 
 init_db()
 
