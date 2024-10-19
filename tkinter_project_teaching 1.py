@@ -38,6 +38,21 @@ def add_stock():
     quantity_entry.delete(0, tk.END)
     price_entry.delete(0, tk.END)
 
+def show_stocks():
+    conn = sqlite3.connect('Stocks.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT ticker, quantity, price FROM stocks")
+    mylist = cursor.fetchall()
+
+    if not mylist:
+        result_label.config(text="No stocks in the Database")
+    else:
+        stocks_list = [f"{stock[0]}: {stock[1]} shares at {stock[2]:.2f}" for stock in mylist]
+        result_label.config(text='\n'.join(stocks_list))
+
+
+
 #coontect to database 
 init_db()
 
@@ -69,7 +84,12 @@ price_entry.grid(row=2 , column=1,padx=5,pady=5)
 add_stock_button = tk.Button(root,text="Add Stock",command=add_stock)
 add_stock_button.grid(row=3,column=0,padx=5,pady=5)
 
+show_all_button = tk.Button(root, text="Show list of stocks", command=show_stocks)
+show_all_button.grid(row=3, column=1, padx=5, pady=5)
 
+#Result display
+result_label = tk.Label(root, text="Results will appear here", wraplength=300)
+result_label.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
 
 #main loop
 root.mainloop()
