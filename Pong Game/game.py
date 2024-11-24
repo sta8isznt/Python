@@ -7,6 +7,7 @@ class Game:
 
         #Screen Settings
         self.screen = pg.display.set_mode((1280, 700))
+        self.screen_rect = self.screen.get_rect()
         pg.display.set_caption("Pong Game")
 
         self.clock = pg.time.Clock()
@@ -18,6 +19,7 @@ class Game:
             self.clock.tick(60)
 
     def _update_screen(self):
+        pg.draw.aaline(self.screen, 'white', self.screen_rect.midtop, self.screen_rect.midbottom)
         pg.display.update()
 
     def _check_events(self):
@@ -35,5 +37,6 @@ class Game:
     def _check_keyup_events(self, event):
         pass
 
-my_game = Game()
-my_game.run()
+if __name__ == "__main__":     
+    my_game = Game()
+    my_game.run()
